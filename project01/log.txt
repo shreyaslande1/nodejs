@@ -1,0 +1,3 @@
+1783446363603: GET: /api/users
+1783446379172: POST: /api/users
+1783446410540: PATCH: /api/users

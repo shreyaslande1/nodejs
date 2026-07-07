@@ -9,6 +9,22 @@ app.use(express.json());
 // Middleware should come first
 app.use(express.urlencoded({ extended: false }));
 
+// app.use((req, res, next)=>{
+//     console.log("hello from middleware 1")
+//     req.myUserName = "shreyas"
+//     next()
+// })
+// app.use((req, res, next)=>{
+//     console.log("hello from middleware 2", req.myUserName)
+//     next()
+// })
+
+app.use((req,res, next)=>{
+    fs.appendFile("log.txt", `${Date.now()}: ${req.method}: ${req.path}\n`, (err, data)=>{
+        next();
+    })
+})
+
 app.route("/api/users/:id")
 .get((req, res)=>{
     const id = Number(req.params.id);
