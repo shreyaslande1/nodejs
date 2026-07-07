@@ -98,6 +98,7 @@ app.post("/api/users", (req, res)=>{
 
 
 app.get("/api/users", (req, res)=>{
+    res.setHeader("X-myName", "Shreyas lande")
     return res.json(users);
 });
 
