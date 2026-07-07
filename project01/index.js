@@ -1,33 +1,99 @@
 const express = require("express");
-const users = require("./MOCK_DATA.json")
+const users = require("./MOCK_DATA.json");
+const fs = require("fs");
+const { json } = require("stream/consumers");
 const app = express();
 
 const PORT = 8000;
-// app.get("/users", (req, res)=>{
-//     const html = `
-//         <ul>
-//         ${users.map((user)=>`<li>${user.first_name}</li>`)}
-//         </ul>
-//     `;
-//     res.send(html)
-// })
+app.use(express.json());
+// Middleware should come first
+app.use(express.urlencoded({ extended: false }));
+
 app.route("/api/users/:id")
 .get((req, res)=>{
     const id = Number(req.params.id);
-    const user = users.find((user)=>user.id===id);
-    return res.json(user)
-}).patch((req, res)=>{
-    return res.json({status:"pending"})
-}).delete((req, res)=>{
-    return res.json({status:"pending"})
+    const user = users.find((user)=>user.id === id);
+    return res.json(user);
+})
+.patch((req, res)=>{
+    const id = Number(req.params.id);
+    const body = req.body;
+    
+    const userindex = user.findIndex((user)=> user.id===id);
+    if(userindex===-1){
+        return res.status(404).json({message:"user not found"});
+    }
+    users[userindex] = {
+        ...users[userindex],
+        ...body,
+    }
+    fs.writeFile("./MOCK_DATA.json", json.stringify(users, null, 2), err=>{
+        if(err){
+            return res.status(500).json({message:"fail to upload user"})
+        }
+        return res.json({
+            status: "success",
+            message:"user updated successfully",
+            user:user[userindex],
+        })
+    })
+})
+.delete((req, res) => {
+    const id = Number(req.params.id);
+
+    const userIndex = users.findIndex((user) => user.id === id);
+
+    if (userIndex === -1) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    users.splice(userIndex, 1);
+
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users, null, 2), (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Failed to delete user" });
+        }
+
+        return res.json({
+            status: "success",
+            message: "User deleted successfully",
+        });
+    });
 })
 
 app.post("/api/users", (req, res)=>{
-    return res.json({status:"pending"})
+    console.log("got it")
+    console.log(req.body)
+    const data = req.body;
+
+    users.push({...data, id: users.length + 1});
+
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err)=>{
+        if(err){
+            return res.status(500).json({error:"Something went wrong"});
+        }
+
+        return res.json({
+            status:"success",
+            id: users.length
+        });
+    });
 });
 
-app.get("/api/users", (req, res)=>{
-    return res.json(users)
-})
 
-app.listen(PORT, ()=>{console.log("server is started on port 8000")})
+app.get("/api/users", (req, res)=>{
+    return res.json(users);
+});
+
+
+app.listen(PORT, ()=>{
+    console.log("server is started on port 8000");
+});
+    // app.get("/users", (req, res)=>{
+    //     const html = `
+    //         <ul>
+    //         ${users.map((user)=>`<li>${user.first_name}</li>`)}
+    //         </ul>
+    //     `;
+    //     res.send(html)
+    // })
