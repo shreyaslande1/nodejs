@@ -19,11 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 //     next()
 // })
 
-app.use((req,res, next)=>{
-    fs.appendFile("log.txt", `${Date.now()}: ${req.method}: ${req.path}\n`, (err, data)=>{
-        next();
-    })
-})
+// app.use((req,res, next)=>{
+//     fs.appendFile("log.txt", `${Date.now()}: ${req.method}: ${req.path}\n`, (err, data)=>{
+//         next();
+//     })
+// })
 
 app.route("/api/users/:id")
 .get((req, res)=>{
@@ -35,7 +35,7 @@ app.route("/api/users/:id")
     const id = Number(req.params.id);
     const body = req.body;
     
-    const userindex = user.findIndex((user)=> user.id===id);
+    const userindex = users.findIndex((user)=> user.id===id);
     if(userindex===-1){
         return res.status(404).json({message:"user not found"});
     }
@@ -81,6 +81,9 @@ app.post("/api/users", (req, res)=>{
     console.log("got it")
     console.log(req.body)
     const data = req.body;
+if(!data || !data.first_name || !data.last_name || !data.email){
+    return res.status(400).json({msg: "all feilds are required"});
+}
 
     users.push({...data, id: users.length + 1});
 
@@ -89,7 +92,7 @@ app.post("/api/users", (req, res)=>{
             return res.status(500).json({error:"Something went wrong"});
         }
 
-        return res.json({
+        return res.status(201).json({
             status:"success",
             id: users.length
         });
