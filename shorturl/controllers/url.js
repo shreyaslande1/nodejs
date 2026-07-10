@@ -11,12 +11,18 @@ async function handleGenerateNewShortURL(req, res) {
     const shortId = nanoid(8);
 
     await URL.create({
-        shortId: shortId,
+        shortId,
         redirectedURL: body.url,
-        visitHistory: [],
+        visitHistory: [], 
+        createdBy: req.user._id,
     });
 
-    return res.json({ id: shortId });
+    const allurls = await URL.find({});
+
+    return res.render("home", {
+        id: shortId,
+        urls: allurls,
+    });
 }
 
 async function handleGetAnalytics(req, res) {

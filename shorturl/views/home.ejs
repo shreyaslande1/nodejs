@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short URL</title>
+</head>
+<body>
+
+    <h1>Home</h1>
+
+    <% if (locals.id) { %>
+        <p>
+            URL Generated:
+            <a href="http://localhost:8001/<%= id %>" target="_blank">
+                http://localhost:8001/<%= id %>
+            </a>
+        </p>
+    <% } %>
+
+    <form method="POST" action="/url">
+        <label>Enter your original URL</label><br><br>
+
+        <input
+            type="text"
+            name="url"
+            placeholder="https://example.com"
+            required
+        >
+
+        <button type="submit">Generate</button>
+    </form>
+
+    <br><br>
+
+    <% if (locals.urls && urls.length > 0) { %>
+
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Short ID</th>
+                    <th>Original URL</th>
+                    <th>Clicks</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% urls.forEach((url, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= url.shortId %></td>
+                        <td><%= url.redirectedURL %></td>
+                        <td><%= url.visitHistory.length %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+    <% } else { %>
+
+        <p>No URLs found.</p>
+
+    <% } %>
+
+</body>
+</html>
