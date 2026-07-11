@@ -6,9 +6,38 @@
     <title>file upload</title>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="profileimage"/>
-        <button type="submit">submit</button>
-    </form>
+    <h1>Upload Image</h1>
+
+<form action="/upload" method="POST" enctype="multipart/form-data">
+
+    <input type="file" name="profileimage">
+
+    <button type="submit">
+        Upload
+    </button>
+
+</form>
+
+
+<h2>Images</h2>
+
+<% if(images.length > 0) { %>
+
+    <% images.forEach(image => { %>
+
+        <div>
+            <p><%= image.filename %></p>
+
+            <img src="/<%= image.path %>" width="300">
+
+        </div>
+
+    <% }) %>
+
+<% } else { %>
+
+    <p>No images uploaded yet</p>
+
+<% } %>
 </body>
 </html>
