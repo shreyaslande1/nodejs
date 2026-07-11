@@ -33,7 +33,7 @@ app.use(express.static("uploads"));
 app.get("/", async (req, res)=>{
 
     const images = await Image.find({});
-    console.log(images[0].path);
+    
     
     return res.render("homepage", {
         images
