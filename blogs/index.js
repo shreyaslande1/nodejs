@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/user");
+const Blog = require("./models/blog");
 const blogRouter = require("./routes/blog");
 const { checkForAuthenticationCookie } = require("./middleware/authentication");
 const app = express();
@@ -18,13 +19,16 @@ app.use(express.json()); // For JSON requests
 app.use(express.urlencoded({ extended: false })); // For HTML form data
 app.use(cookieParser())
 app.use(checkForAuthenticationCookie("token"));
+app.use(express.static(path.resolve('./public')));
 app.use("/user", userRouter);
 app.use("/blog", blogRouter);
 
 
-app.get("/", (req, res)=>{
+app.get("/", async (req, res)=>{
+    const allBlogs = await (await Blog.find({}));
     res.render("home",{
-        user: req.user
+        user: req.user,
+        blogs : allBlogs,
     })
 })
 
