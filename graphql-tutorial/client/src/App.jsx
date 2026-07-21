@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client/react";
 const query = gql`
   query GetTodoWithUser {
     getTodos{
-      id
+      
       todo
       completed
       user{
